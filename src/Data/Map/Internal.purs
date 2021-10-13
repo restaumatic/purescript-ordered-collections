@@ -64,8 +64,6 @@ module Data.Map.Internal
 
 import Prelude
 
-import Control.Alt (class Alt)
-import Control.Plus (class Plus)
 import Data.Eq (class Eq1)
 import Data.Foldable (class Foldable, foldl, foldr)
 import Data.FoldableWithIndex (class FoldableWithIndex, foldlWithIndex, foldrWithIndex)
@@ -133,11 +131,11 @@ instance monoidSemigroupMap ::
   ) => Monoid (Map k v) where
   mempty = empty
 
-instance altMap :: Ord k => Alt (Map k) where
-  alt = union
+instance semigroupMap :: Ord k => Semigroup (Map k v) where
+  append = union
 
-instance plusMap :: Ord k => Plus (Map k) where
-  empty = empty
+instance monoidMap :: Ord k => Monoid (Map k v) where
+  mempty = empty
 
 instance functorMap :: Functor (Map k) where
   map f = go
@@ -200,6 +198,9 @@ instance foldableWithIndexMap :: FoldableWithIndex k (Map k) where
       Leaf -> mempty
       Node _ _ k v l r ->
         go l <> f k v <> go r
+
+asList :: forall k v. List (Tuple k v) -> List (Tuple k v)
+asList = identity
 
 instance traversableMap :: Traversable (Map k) where
   traverse f = go
@@ -378,10 +379,7 @@ findMin = case _ of
 -- |  == ["zero", "one", "two"]
 -- | ```
 foldSubmap :: forall k v m. Ord k => Monoid m => Maybe k -> Maybe k -> (k -> v -> m) -> Map k v -> m
-foldSubmap = foldSubmapBy (<>) mempty
-
-foldSubmapBy :: forall k v m. Ord k => (m -> m -> m) -> m -> Maybe k -> Maybe k -> (k -> v -> m) -> Map k v -> m
-foldSubmapBy appendFn memptyValue kmin kmax f =
+foldSubmap kmin kmax f =
   let
     tooSmall =
       case kmin of
@@ -410,11 +408,25 @@ foldSubmapBy appendFn memptyValue kmin kmax f =
 
     go = case _ of
       Leaf ->
+<<<<<<< HEAD
         memptyValue
       Node _ _ k v left right ->
                     (if tooSmall k then memptyValue else go left)
         `appendFn` (if inBounds k then f k v else memptyValue)
         `appendFn` (if tooLarge k then memptyValue else go right)
+=======
+        mempty
+      Two left k v right ->
+           (if tooSmall k then mempty else go left)
+        <> (if inBounds k then f k v else mempty)
+        <> (if tooLarge k then mempty else go right)
+      Three left k1 v1 mid k2 v2 right ->
+           (if tooSmall k1 then mempty else go left)
+        <> (if inBounds k1 then f k1 v1 else mempty)
+        <> (if tooSmall k2 || tooLarge k1 then mempty else go mid)
+        <> (if inBounds k2 then f k2 v2 else mempty)
+        <> (if tooLarge k2 then mempty else go right)
+>>>>>>> aa2c5c9... Bring back Semigroup and Monoid instances
   in
     go
 
@@ -445,7 +457,7 @@ foldSubmapBy appendFn memptyValue kmin kmax f =
 -- |       else not (member key m')
 -- | ```
 submap :: forall k v. Ord k => Maybe k -> Maybe k -> Map k v -> Map k v
-submap kmin kmax = foldSubmapBy union empty kmin kmax singleton
+submap kmin kmax = foldSubmap kmin kmax singleton
 
 -- | Test if a key is a member of a map
 member :: forall k v. Ord k => k -> Map k v -> Boolean
