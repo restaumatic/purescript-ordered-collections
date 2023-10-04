@@ -121,14 +121,16 @@ instance semigroupMap ::
   ( Warn (Text "Data.Map's `Semigroup` instance is now unbiased and differs from the left-biased instance defined in PureScript releases <= 0.13.x.")
   , Ord k
   , Semigroup v
-  ) => Semigroup (Map k v) where
+  ) =>
+  Semigroup (Map k v) where
   append = unionWith append
 
 instance monoidSemigroupMap ::
   ( Warn (Text "Data.Map's `Semigroup` instance is now unbiased and differs from the left-biased instance defined in PureScript releases <= 0.13.x.")
   , Ord k
   , Semigroup v
-  ) => Monoid (Map k v) where
+  ) =>
+  Monoid (Map k v) where
   mempty = empty
 
 instance semigroupMap :: Ord k => Semigroup (Map k v) where
@@ -232,7 +234,7 @@ showTree = go ""
   go ind = case _ of
     Leaf -> ind <> "Leaf"
     Node h _ k v l r ->
-      (ind <> "[" <> show h  <> "] " <> show k <> " => " <> show v <> "\n")
+      (ind <> "[" <> show h <> "] " <> show k <> " => " <> show v <> "\n")
         <> (go (ind <> "    ") l <> "\n")
         <> (go (ind <> "    ") r)
 
@@ -350,7 +352,7 @@ lookupGT k = go
 findMax :: forall k v. Map k v -> Maybe { key :: k, value :: v }
 findMax = case _ of
   Leaf -> Nothing
-  Node _ _ k v  _ r ->
+  Node _ _ k v _ r ->
     case r of
       Leaf -> Just { key: k, value: v }
       _ -> findMax r
@@ -408,25 +410,11 @@ foldSubmap kmin kmax f =
 
     go = case _ of
       Leaf ->
-<<<<<<< HEAD
         memptyValue
       Node _ _ k v left right ->
-                    (if tooSmall k then memptyValue else go left)
-        `appendFn` (if inBounds k then f k v else memptyValue)
-        `appendFn` (if tooLarge k then memptyValue else go right)
-=======
-        mempty
-      Two left k v right ->
-           (if tooSmall k then mempty else go left)
-        <> (if inBounds k then f k v else mempty)
-        <> (if tooLarge k then mempty else go right)
-      Three left k1 v1 mid k2 v2 right ->
-           (if tooSmall k1 then mempty else go left)
-        <> (if inBounds k1 then f k1 v1 else mempty)
-        <> (if tooSmall k2 || tooLarge k1 then mempty else go mid)
-        <> (if inBounds k2 then f k2 v2 else mempty)
-        <> (if tooLarge k2 then mempty else go right)
->>>>>>> aa2c5c9... Bring back Semigroup and Monoid instances
+        (if tooSmall k then memptyValue else go left)
+          `appendFn` (if inBounds k then f k v else memptyValue)
+          `appendFn` (if tooLarge k then memptyValue else go right)
   in
     go
 
@@ -871,7 +859,7 @@ instance (Ord k, Ord v) => Ord (MapIter k v) where
                 other
           other ->
             other
-      IterDone, b'->
+      IterDone, b' ->
         case b' of
           IterDone ->
             EQ
