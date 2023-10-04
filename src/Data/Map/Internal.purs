@@ -117,21 +117,21 @@ instance ordMap :: (Ord k, Ord v) => Ord (Map k v) where
 instance showMap :: (Show k, Show v) => Show (Map k v) where
   show as = "(fromFoldable " <> show (toUnfoldable as :: Array _) <> ")"
 
-instance semigroupMap ::
-  ( Warn (Text "Data.Map's `Semigroup` instance is now unbiased and differs from the left-biased instance defined in PureScript releases <= 0.13.x.")
-  , Ord k
-  , Semigroup v
-  ) =>
-  Semigroup (Map k v) where
-  append = unionWith append
+-- instance semigroupMap ::
+--   ( Warn (Text "Data.Map's `Semigroup` instance is now unbiased and differs from the left-biased instance defined in PureScript releases <= 0.13.x.")
+--   , Ord k
+--   , Semigroup v
+--   ) =>
+--   Semigroup (Map k v) where
+--   append = unionWith append
 
-instance monoidSemigroupMap ::
-  ( Warn (Text "Data.Map's `Semigroup` instance is now unbiased and differs from the left-biased instance defined in PureScript releases <= 0.13.x.")
-  , Ord k
-  , Semigroup v
-  ) =>
-  Monoid (Map k v) where
-  mempty = empty
+-- instance monoidSemigroupMap ::
+--   ( Warn (Text "Data.Map's `Semigroup` instance is now unbiased and differs from the left-biased instance defined in PureScript releases <= 0.13.x.")
+--   , Ord k
+--   , Semigroup v
+--   ) =>
+--   Monoid (Map k v) where
+--   mempty = empty
 
 instance semigroupMap :: Ord k => Semigroup (Map k v) where
   append = union
