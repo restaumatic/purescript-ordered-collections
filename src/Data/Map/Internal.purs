@@ -381,7 +381,10 @@ findMin = case _ of
 -- |  == ["zero", "one", "two"]
 -- | ```
 foldSubmap :: forall k v m. Ord k => Monoid m => Maybe k -> Maybe k -> (k -> v -> m) -> Map k v -> m
-foldSubmap kmin kmax f =
+foldSubmap = foldSubmapBy (<>) mempty
+
+foldSubmapBy :: forall k v m. Ord k => (m -> m -> m) -> m -> Maybe k -> Maybe k -> (k -> v -> m) -> Map k v -> m
+foldSubmapBy appendFn memptyValue kmin kmax f =
   let
     tooSmall =
       case kmin of
