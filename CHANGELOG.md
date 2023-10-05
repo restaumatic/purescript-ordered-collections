@@ -10,6 +10,31 @@ New features:
 
 Bugfixes:
 
+Other improvements:
+
+## [v3.1.1](https://github.com/purescript/purescript-ordered-collections/releases/tag/v3.1.1) - 2023-08-30
+
+Bugfixes:
+- Fixes Map/Set difference, which was broken due to the internal rewrite (#68 @natefaubion)
+
+## [v3.1.0](https://github.com/purescript/purescript-ordered-collections/releases/tag/v3.1.0) - 2023-08-11
+
+Other improvements:
+- Speed up `difference` by using 1 fold instead of 2 (#64 by @JordanMartinez)
+- Rewrite internals for performance improvements (#66 by @natefaubion)
+
+## [v3.0.0](https://github.com/purescript/purescript-ordered-collections/releases/tag/v3.0.0) - 2022-04-27
+
+Breaking changes:
+- Update project and deps to PureScript v0.15.0 (#53 by @JordanMartinez)
+
+New features:
+- Exported `Data.Map.Internal` data constructors (#52 by @natefaubion)
+- Add unbiased `Semigroup`/`Monoid` instances to `Map` with `Warn` (#54 by @JordanMartinez)
+- Improved speed of `foldr`, `foldl`, `foldMap`, `foldlWithIndex`, `foldrWithIndex`, `foldMapWithIndex`, `unionWith`, `keys` and `values` (#60 by @xgrommx, #61 and #62 by @JordanMartinez)
+
+Bugfixes:
+
 ## [v2.0.2](https://github.com/purescript/purescript-ordered-collections/releases/tag/v2.0.2) - 2021-08-27
 
 New features:
