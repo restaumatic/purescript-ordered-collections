@@ -9,14 +9,18 @@ import Data.Foldable (foldl, for_, all, and)
 import Data.FoldableWithIndex (foldrWithIndex)
 import Data.Function (on)
 import Data.FunctorWithIndex (mapWithIndex)
-import Data.List (List(..), groupBy, length, nubBy, singleton, sort, sortBy, (:))
+import Data.List (List(..), groupBy, length, nubBy, singleton, sort, sortBy, (:), head, last)
 import Data.List.NonEmpty as NEL
 import Data.Map as M
 import Data.Map.Gen (genMap)
 import Data.Maybe (Maybe(..), fromMaybe, maybe)
 import Data.Tuple (Tuple(..), fst, uncurry)
+import Data.Semigroup.First (First(..))
+import Data.Semigroup.Last (Last(..))
+import Data.Tuple (Tuple(..), fst, snd, uncurry)
 import Effect (Effect)
 import Effect.Console (log)
+import Effect.Exception (throwException, error)
 import Partial.Unsafe (unsafePartial)
 import Test.QuickCheck ((<?>), (<=?), (===), quickCheck, quickCheck')
 import Test.QuickCheck.Arbitrary (class Arbitrary, arbitrary)
@@ -452,3 +456,76 @@ mapTests = do
     let result = M.catMaybes maybeMap
     let expected = M.delete 1 m
     result === expected
+<<<<<<< HEAD
+=======
+
+  log "SemigroupMap's Semigroup instance is based on value's Semigroup instance"
+  quickCheck \(Tuple leftStr rightStr :: Tuple String String) -> do
+    let key = "foo"
+    let left = M.singleton key leftStr
+    let right = M.singleton key rightStr
+    let result = left <> right
+    let expected = M.singleton key $ leftStr <> rightStr
+    result == expected
+  quickCheck \(Tuple leftStr rightStr :: Tuple String String) -> do
+    let key = "foo"
+    let left = M.singleton key $ First leftStr
+    let right = M.singleton key $ First rightStr
+    let result = left <> right
+    result == left
+  quickCheck \(Tuple leftStr rightStr :: Tuple String String) -> do
+    let key = "foo"
+    let left = M.singleton key $ Last leftStr
+    let right = M.singleton key $ Last rightStr
+    let result = left <> right
+    result == right
+
+  log "SemigroupMap's Semigroup instance is based on value's Semigroup instance"
+  quickCheck \(Tuple leftStr rightStr :: Tuple String String) -> do
+    let key = "foo"
+    let left = smSingleton key leftStr
+    let right = smSingleton key rightStr
+    let result = left <> right
+    let expected = smSingleton key $ leftStr <> rightStr
+    result == expected
+  quickCheck \(Tuple leftStr rightStr :: Tuple String String) -> do
+    let key = "foo"
+    let left = smSingleton key $ First leftStr
+    let right = smSingleton key $ First rightStr
+    let result = left <> right
+    result == left
+  quickCheck \(Tuple leftStr rightStr :: Tuple String String) -> do
+    let key = "foo"
+    let left = smSingleton key $ Last leftStr
+    let right = smSingleton key $ Last rightStr
+    let result = left <> right
+    result == right
+
+  log "any"
+  quickCheck $ \(TestMap m :: TestMap SmallKey Int) ->
+    let list = M.toUnfoldable m
+    in  case head list of
+          Nothing -> true
+          Just h  -> case last list of
+            Nothing -> true
+            Just l  -> M.any (\x -> x == snd h) m && M.any (\x -> x == snd l) m
+
+  log "any with empty map"
+  when (M.any (\_ -> true) (M.empty :: M.Map SmallKey Int)) $ throwException $ error "Test any with empty map failed"
+
+  log "anyWithKey"
+  quickCheck $ \(TestMap m :: TestMap SmallKey Int) ->
+    let list = M.toUnfoldable m
+    in  case head list of
+          Nothing -> true
+          Just h  -> case last list of
+            Nothing -> true
+            Just l  -> M.anyWithKey (\k v -> k == fst h && v == snd h) m && M.anyWithKey (\k v -> k == fst l && v == snd l) m
+  
+  log "anyWithKey with empty map"
+  when (M.anyWithKey (\_ _ -> true) (M.empty :: M.Map SmallKey Int)) $ throwException $ error "Test anyWithKey with empty map failed"
+
+
+smSingleton :: forall key value. key -> value -> M.SemigroupMap key value
+smSingleton k v = M.SemigroupMap (M.singleton k v)
+>>>>>>> upstream/master

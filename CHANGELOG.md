@@ -12,6 +12,12 @@ Bugfixes:
 
 Other improvements:
 
+## [v3.2.0](https://github.com/purescript/purescript-ordered-collections/releases/tag/v3.2.0) - 2024-03-19
+
+New features:
+* Add `Data.Map.any` (#73 by @flip111)
+* Add `Data.Map.anyWithKey` (#73 by @flip111)
+
 ## [v3.1.1](https://github.com/purescript/purescript-ordered-collections/releases/tag/v3.1.1) - 2023-08-30
 
 Bugfixes:
